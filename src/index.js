@@ -6,7 +6,8 @@ import MariaDB from "./graphql/dataSources/mariadb.js";
 import 'dotenv/config'
 import express from "express"
 import ExpressServer from "./express/express.js";
-
+import cors from 'cors';
+import router from "./express/routes/user.js"
 
 
 /**
@@ -14,7 +15,7 @@ import ExpressServer from "./express/express.js";
  * @type {{client: string, connection: {password: *, database: *, port: *, host: *, user: *}}}
  */
 
-const knexConfig = {
+export const knexConfig = {
     client: "mysql",
     connection: {
         host: process.env.MARIADB_HOST,
@@ -29,7 +30,11 @@ const knexConfig = {
  * Express server initialization
  */
 export const app = express();
-
+console.log(process.env.EXPRESS_PORT);
+app.use(cors());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use('/users', router);
 app.listen(process.env.EXPRESS_PORT, () => {
     console.log(`
         Express server launched
