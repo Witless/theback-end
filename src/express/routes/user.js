@@ -4,8 +4,9 @@ import { user } from "../model/user.model.js";
 import {knexConfig} from "../../index.js";
 import Knex from "knex";
 import {GenerateToken} from "../AuthJWT/auth.js";
+import * as Process from "process";
 
-const secretKeyPin = "2L9u8|~FxBu!a0w9]"
+
 
 const router = new express.Router();
 
@@ -74,7 +75,7 @@ router.post('/login', async (req, res) => {
                 email: email,
                 password: password
             };
-            const token = GenerateToken(payload, secretKeyPin);
+            const token = GenerateToken(payload, process.env.secretKeyPin);
             res.json({ token });
         } else {
             res.status(500).json({ error: 'Credenciales inválidas' });
