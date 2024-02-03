@@ -1,5 +1,4 @@
 import user from "./routes/user.js"
-import {Router as router} from "express";
 
 export default class ExpressServer {
 
