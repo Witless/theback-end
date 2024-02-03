@@ -2,8 +2,7 @@ export const resolvers = {
 
     Query: {
 
-        user: (parent, {id}, {dataSources}) => {
-            console.log(parent)
+        user: (_, {id}, {dataSources}) => {
             return dataSources.mariadb.getUser(id);
         },
 
@@ -13,6 +12,13 @@ export const resolvers = {
 
         unapprovedEvents: (_, __, {dataSources}) => {
             return dataSources.mariadb.getUnapprovedEvents()
+        }
+    },
+
+    Event: {
+        user: ({Users_idUser}, _, {dataSources}) => {
+            //TODO Check if I can call the Query user from here instead of extracting from the dataSource directly
+            return dataSources.mariadb.getUser(Users_idUser)
         }
     },
 
