@@ -11,7 +11,7 @@ export const resolvers = {
         },
 
         users: (_, __, {dataSources, user}) => {
-            if(user.role !== 'ADMIN') return null;
+            if(user?.role !== 'ADMIN') return null;
             return dataSources.mariadb.getUsers();
         },
 
