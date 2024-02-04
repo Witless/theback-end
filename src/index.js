@@ -30,11 +30,9 @@ export const knexConfig = {
  * Express server initialization
  */
 export const app = express();
-console.log(process.env.EXPRESS_PORT);
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use('/users', router);
 app.listen(process.env.EXPRESS_PORT, () => {
     console.log(`
         Express server launched
@@ -42,7 +40,7 @@ app.listen(process.env.EXPRESS_PORT, () => {
     `)
 })
 
-new ExpressServer(app).init();
+new ExpressServer(app, knexConfig).init();
 
 /**
  * Apollo server initialization

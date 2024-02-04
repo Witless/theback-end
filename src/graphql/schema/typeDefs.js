@@ -4,12 +4,13 @@ export const typeDefs = gql`
     
     type Query {
         user(id: ID!): User
+        event(id: ID!): Event
         approvedEvents: [Event]
         unapprovedEvents: [Event]
     }
     
     type Mutation {
-        addEvent(title: String!, description: String, coords: String, place: String, country: String, userId: String!): addEventResponse!
+        addEvent(title: String!, description: String!, coords: String, place: String!, country: String, userId: String!): addEventResponse!
     }
     
     type addEventResponse{
@@ -20,7 +21,7 @@ export const typeDefs = gql`
     }
     
     type Event {
-        idEvent: ID!
+        id: ID!
         title: String!
         description: String
         coords: String
@@ -32,7 +33,7 @@ export const typeDefs = gql`
     }
     
     type User {
-        idUser: ID!
+        id: ID!
         username: String
         reputation: Int
         level: Int

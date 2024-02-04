@@ -1,11 +1,9 @@
 import express from "express";
-import crypto from "crypto";
-import { user } from "../model/user.model.js";
-import {knexConfig} from "../../index.js";
-import Knex from "knex";
-import {GenerateToken} from "../AuthJWT/auth.js";
-import * as Process from "process";
-
+import {user} from "../model/user.model.js";
+import {generateToken} from "../AuthJWT/auth.js";
+import DBConnection from "../DBConnection.js";
+import utils from "../../utils/utils.js";
+import mariadb from "../dataSources/mariadb.js";
 
 
 const router = new express.Router();
@@ -27,7 +25,7 @@ router.post('/signup', (req, res) => {
         console.log("Ey" + req.body.username + req.body.email + req.body.password);
 
         const usuariox = new user({
-            idUser: crypto.randomUUID(),
+            id: utils.generateUUIDv4(),
             username: req.body.username,
             password: req.body.password,
             birth: req.body.birth,
@@ -43,7 +41,7 @@ router.post('/signup', (req, res) => {
         console.log("Ey2" + usuariox.username + usuariox.email);
 
         // Guardar usuario en la base de datos
-        user.create(usuariox, (err, token) => {
+        mariadb.createUser(usuariox, (err, token) => {
             if (err) {
                 return res.status(500).send({
                     message: err.message || "Some error occurred while creating the usuario."
@@ -63,20 +61,21 @@ router.post('/signup', (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
     try {
-        const resultados = await Knex(knexConfig).select('idUser').from("users").where({username:req.body.username,password: req.body.password});
+        const resultados = await DBConnection.getConnection().select('id', 'reputation', 'level', 'avatar', 'verified').from("Users").where({username:req.body.username,password: req.body.password}).first();
 
-        console.log(resultados + "" + resultados.length);
+        console.log(resultados + "" + resultados.id);
 
-        if (resultados.length > 0) {
-            const payload = {
-                email: email,
-                password: password
-            };
-            const token = GenerateToken(payload, process.env.secretKeyPin);
-            res.json({ token });
+        if (resultados.id) {
+
+            const payload = JSON.parse(JSON.stringify(resultados))
+
+            const token = generateToken(payload, process.env.JWT_SIGNING_KEY);
+
+            res.json({ token, id: resultados.id });
+
         } else {
             res.status(500).json({ error: 'Credenciales inválidas' });
         }
