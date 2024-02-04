@@ -7,8 +7,10 @@ import 'dotenv/config'
 import express from "express"
 import ExpressServer from "./express/express.js";
 import cors from 'cors';
-import router from "./express/routes/user.js"
+import jwt from "jsonwebtoken";
+import Logger from "./logger/logger.js"
 
+const JWT_SIGNING_KEY = process.env.JWT_SIGNING_KEY
 
 /**
  * Knex SQL Configuration
@@ -59,14 +61,37 @@ async function startApolloServer(){
         listen: {
             port: process.env.APOLLO_PORT
         },
-        context: async () => {
-            const {cache} = apolloServer;
+        context: async ({req}) => {
 
-            return {
-                dataSources: {
-                    mariadb: new MariaDB(knexConfig)
+            /**
+             * Only accepted authentication method is Bearer token
+             */
+
+            const token = req.headers.authorization || '';
+            let jwtString;
+
+            try {
+                 jwtString = jwt.verify(token, JWT_SIGNING_KEY);
+            }catch (err) {
+                Logger.apolloInfoLog("Authentication failed");
+            }
+
+            if(jwtString){
+                return {
+                    dataSources: {
+                        mariadb: new MariaDB(knexConfig)
+                    },
+                    user: JSON.parse(JSON.stringify(jwtString))
+                }
+            }else{
+                return {
+                    dataSources: {
+                        mariadb: new MariaDB(knexConfig)
+                    }
                 }
             }
+
+
         }
     })
 

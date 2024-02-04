@@ -9,5 +9,7 @@ export function generateToken(payload, clave) {
 
     return jwt.sign(payload, clave, options)
 
+
+
 }
 

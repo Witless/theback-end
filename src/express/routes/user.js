@@ -30,7 +30,7 @@ router.post('/signup', (req, res) => {
             password: req.body.password,
             birth: req.body.birth,
             reputation: 0,
-            level: 0,
+            role: "USER",
             avatar: "",
             email: req.body.email,
             location: req.body.location,
@@ -64,7 +64,7 @@ router.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
     try {
-        const resultados = await DBConnection.getConnection().select('id', 'reputation', 'level', 'avatar', 'verified').from("Users").where({username:req.body.username,password: req.body.password}).first();
+        const resultados = await DBConnection.getConnection().select('id', 'reputation', 'role', 'avatar', 'verified').from("Users").where({username:req.body.username,password: req.body.password}).first();
 
         console.log(resultados + "" + resultados.id);
 

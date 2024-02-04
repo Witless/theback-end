@@ -10,11 +10,17 @@ export const resolvers = {
             return dataSources.mariadb.getUser(id);
         },
 
+        users: (_, __, {dataSources, user}) => {
+            if(user.role !== 'ADMIN') return null;
+            return dataSources.mariadb.getUsers();
+        },
+
         approvedEvents: (_, __, {dataSources}) => {
             return dataSources.mariadb.getApprovedEvents()
         },
 
-        unapprovedEvents: (_, __, {dataSources}) => {
+        unapprovedEvents: (_, __, {dataSources, user}) => {
+            if(!user) return null
             return dataSources.mariadb.getUnapprovedEvents()
         },
 
@@ -26,11 +32,13 @@ export const resolvers = {
             return dataSources.mariadb.getFeed(id)
         },
 
-        mediaInFeed: (_, {id}, {dataSources}) => {
+        mediaInFeed: (_, {id}, {dataSources, user}) => {
+            if(!user) return null
             return dataSources.mariadb.getMediaInFeed(id);
         },
 
-        feedsInEvent: (_, {id}, {dataSources}) => {
+        feedsInEvent: (_, {id}, {dataSources, user}) => {
+            if(!user) return null
             return dataSources.mariadb.getFeedsInEvent(id);
         }
     },
@@ -63,7 +71,8 @@ export const resolvers = {
          *
          * If failed returns with HTTP Semantics error 409 (Conflict) by default
          */
-         addEvent: async (_, args, {dataSources}) => {
+         addEvent: async (_, args, {dataSources, user}) => {
+            if(!user) return null;
             try{
                 const event = await dataSources.mariadb.addEvent(args);
                 return {
@@ -89,7 +98,8 @@ export const resolvers = {
          *
          * If failed returns with HTTP Semantics error 409 (Conflict) by default
          */
-        addFeed: async (_, args, {dataSources}) => {
+        addFeed: async (_, args, {dataSources, user}) => {
+            if(!user) return null;
             try{
                 const feed = await dataSources.mariadb.addFeed(args);
                 return {
@@ -112,7 +122,8 @@ export const resolvers = {
          *
          * If failed returns with HTTP Semantics error 409 (Conflict) by default
          */
-        addMedia: async (_, args, {dataSources}) => {
+        addMedia: async (_, args, {dataSources, user}) => {
+            if(!user) return null;
             try{
                 const media = await dataSources.mariadb.addMedia(args);
                 return {

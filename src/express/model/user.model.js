@@ -5,7 +5,7 @@
     this.password = usuario.password;
     this.birth = usuario.birth;
     this.reputation = usuario.reputation;
-    this.level = usuario.level;
+    this.role = usuario.role;
     this.avatar = usuario.avatar;
     this.email = usuario.email;
     this.location = usuario.location;

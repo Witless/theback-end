@@ -76,6 +76,9 @@ class MariaDB extends SQLDataSource {
     }
 
 
+    getUsers(){
+        return this.knex.select().from("Users");
+    }
 }
 
 export default MariaDB

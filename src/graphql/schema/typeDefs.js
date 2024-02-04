@@ -7,25 +7,53 @@ export const typeDefs = gql`
     type Query {
         user(id: ID!): User
         event(id: ID!): Event
+        
+        """
+        @auth Admin
+        """
+        users: [User]
+        
         feed(id: ID!): Feed
+        
         """
         The id provided must be a feedId
+        @auth User
         """
         mediaInFeed(id: ID!): [Media]
+        
         """
         The id provided must be a eventId
+        @auth User
         """
         feedsInEvent(id: ID!): [Feed]
+        
+        
         approvedEvents: [Event]
+        
+        """
+        @auth User
+        """
         unapprovedEvents: [Event]
     }
     
     type Mutation {
+        """
+        @auth User
+        """
         addEvent(title: String!, description: String!, coords: String, place: String!, country: String, userId: String!): addEventResponse!
+        
+        """
+        @auth User
+        """
         addFeed(text: String!, eventId: String!, userId: String!): addFeedResponse!
+        
+        """
+        @auth User
+        """
         addMedia(url: String!, nsfw: Boolean!, feedId: String!): addMediaResponse!
     }
     
+
     type addEventResponse{
         code: Int!
         success: Boolean!
@@ -80,7 +108,7 @@ export const typeDefs = gql`
         id: ID!
         username: String
         reputation: Int
-        level: Int
+        role: String
         avatar: String
         email: String
         verified: Boolean
