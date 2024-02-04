@@ -1,6 +1,8 @@
-import {Query} from "mysql/lib/protocol/sequences/index.js";
+import dateScalar from "graphql-date"
 
 export const resolvers = {
+
+    Date: dateScalar,
 
     Query: {
 
@@ -16,8 +18,20 @@ export const resolvers = {
             return dataSources.mariadb.getUnapprovedEvents()
         },
 
-        event: (_, {id}, {dataSource}) => {
-            //TODO
+        event: (_, {id}, {dataSources}) => {
+            return dataSources.mariadb.getEvent(id)
+        },
+
+        feed: (_, {id}, {dataSources}) => {
+            return dataSources.mariadb.getFeed(id)
+        },
+
+        mediaInFeed: (_, {id}, {dataSources}) => {
+            return dataSources.mariadb.getMediaInFeed(id);
+        },
+
+        feedsInEvent: (_, {id}, {dataSources}) => {
+            return dataSources.mariadb.getFeedsInEvent(id);
         }
     },
 
@@ -27,16 +41,27 @@ export const resolvers = {
         }
     },
 
+    Feed: {
+        event: ({eventId}, _, {dataSources}) => {
+            return resolvers.Query.event(_, {id: eventId}, {dataSources})
+        },
+        user: ({userId}, _, {dataSources}) => {
+            return resolvers.Query.user(_, {id: userId}, {dataSources})
+        }
+    },
+
+    Media: {
+        feed: ({feedId}, _, {dataSources}) => {
+            return resolvers.Query.feed(_, {id: feedId}, {dataSources})
+        }
+    },
+
     Mutation: {
 
         /**
          * Adds an event to the database
          *
          * If failed returns with HTTP Semantics error 409 (Conflict) by default
-         * @param _
-         * @param args
-         * @param dataSources
-         * @returns {Promise<{code: number, success: boolean, message: string, event: *}|{code: number, success: boolean, message: string}>}
          */
          addEvent: async (_, args, {dataSources}) => {
             try{
@@ -56,7 +81,56 @@ export const resolvers = {
             }
 
 
+
+        },
+
+        /**
+         * Adds a feed entry linked to an event and a user to the database
+         *
+         * If failed returns with HTTP Semantics error 409 (Conflict) by default
+         */
+        addFeed: async (_, args, {dataSources}) => {
+            try{
+                const feed = await dataSources.mariadb.addFeed(args);
+                return {
+                    code: 200,
+                    success: true,
+                    message: "Successfully inserted data",
+                    feed
+                }
+            }catch (e) {
+                return {
+                    code: 409,
+                    success: false,
+                    message: "Failed to insert data"
+                }
+            }
+        },
+
+        /**
+         * Adds media linked to a feed to the database
+         *
+         * If failed returns with HTTP Semantics error 409 (Conflict) by default
+         */
+        addMedia: async (_, args, {dataSources}) => {
+            try{
+                const media = await dataSources.mariadb.addMedia(args);
+                return {
+                    code: 200,
+                    success: true,
+                    message: "Successfully inserted data",
+                    media
+                }
+            }catch (e) {
+                return {
+                    code: 409,
+                    success: false,
+                    message: "Failed to insert data"
+                }
+            }
         }
+
+
     }
 
 }
