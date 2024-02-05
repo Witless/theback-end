@@ -46,6 +46,10 @@ export const resolvers = {
     Event: {
         user: ({userId}, _, {dataSources}) => {
             return resolvers.Query.user(_, {id: userId}, {dataSources})
+        },
+
+        coords: ({id}, _, {dataSources}) => {
+            return dataSources.mariadb.getCoords(id);
         }
     },
 

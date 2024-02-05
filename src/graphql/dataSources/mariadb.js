@@ -10,6 +10,14 @@ class MariaDB extends SQLDataSource {
         }).first()
     }
 
+    async getCoords(eventId){
+         const coords = await this.knex.select(this.knex.raw('ST_X(coords) as x, ST_Y(coords) as y'))
+             .where({id: eventId})
+             .from('Events').first()
+        if(!coords?.x || !coords?.y) return null;
+        return coords
+    }
+
     getEvent(id){
          return this.knex.select().from("Events").where({
              id

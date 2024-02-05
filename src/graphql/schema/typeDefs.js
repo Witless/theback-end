@@ -96,12 +96,17 @@ export const typeDefs = gql`
         id: ID!
         title: String!
         description: String
-        coords: String
         timestamp: Date!
         place: String
         country: String
         show: Boolean
+        coords: Point
         user: User
+    }
+    
+    type Point{
+        x: String
+        y: String
     }
     
     type User {
