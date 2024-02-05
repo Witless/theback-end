@@ -3,8 +3,8 @@
  */
 export default class Logger {
 
-    static apolloInfoLog(message){
-        console.info(`[${new Date()}] [Apollo] [Info]: ${message}`)
+    static apolloInfoLog(type, context){
+        console.info(`[${new Date()}] [Apollo] [Info]: ${type} | ${context}`)
     }
 
 

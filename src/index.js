@@ -67,13 +67,15 @@ async function startApolloServer(){
              * Only accepted authentication method is Bearer token
              */
 
+            const incomingIP = req.socket.remoteAddress;
             const token = req.headers.authorization || '';
             let jwtString;
 
             try {
                  jwtString = jwt.verify(token, JWT_SIGNING_KEY);
+                 Logger.apolloInfoLog(`Authentication success`, incomingIP)
             }catch (err) {
-                Logger.apolloInfoLog("Authentication failed");
+                Logger.apolloInfoLog(`Authentication failed`, incomingIP);
             }
 
             if(jwtString){
