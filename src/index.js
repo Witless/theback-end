@@ -49,6 +49,8 @@ new ExpressServer(app, knexConfig).init();
  * @returns {Promise<void>}
  */
 
+const dataSource = new MariaDB(knexConfig)
+
 async function startApolloServer(){
 
 
@@ -81,14 +83,14 @@ async function startApolloServer(){
             if(jwtString){
                 return {
                     dataSources: {
-                        mariadb: new MariaDB(knexConfig)
+                        mariadb: dataSource
                     },
                     user: JSON.parse(JSON.stringify(jwtString))
                 }
             }else{
                 return {
                     dataSources: {
-                        mariadb: new MariaDB(knexConfig)
+                        mariadb: dataSource
                     }
                 }
             }

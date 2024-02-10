@@ -90,6 +90,7 @@ export const typeDefs = gql`
         timestamp: Date!
         event: Event
         user: User
+        media: [Media]
     }
     
     type Event {

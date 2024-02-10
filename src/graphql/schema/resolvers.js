@@ -59,6 +59,9 @@ export const resolvers = {
         },
         user: ({userId}, _, {dataSources}) => {
             return resolvers.Query.user(_, {id: userId}, {dataSources})
+        },
+        media: ({id}, _, {dataSources}) => {
+            return dataSources.mariadb.getMediaInFeed(id);
         }
     },
 
